@@ -44,9 +44,7 @@ const useCountdown = ({targetDate,endTime,status},onStart,onComplete) => {
         onComplete?.(); // Mark as completed if passed endTime by 10+ seconds
         return;
       }
-     
-      // F
-      
+    
   // console.log(distance);
       if (distance < 0) {
         setTimeLeft('Starting soon...');
@@ -491,7 +489,7 @@ const TournamentCard = ({ id, name, entryFee, prizePool, participants, maxPartic
         <div className="flex items-center truncate">
           <FaClock className="text-yellow-400 mr-1 flex-shrink-0" size={12} />
           <span className="truncate text-[10px] sm:text-xs">
-            {status === 'upcoming' ? 'Starts:' : 'Started:'} {formatDateTime(startTime).split(',').pop().trim()}
+            {status === 'upcoming' ? 'Starts:' : 'Ends:'} {formatDateTime(status === 'upcoming' ? startTime : endTime).split(',').pop().trim()}
           </span>
         </div>
       </div>

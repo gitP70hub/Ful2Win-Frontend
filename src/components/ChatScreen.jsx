@@ -45,7 +45,6 @@ const ChatScreen = ({ selectedFriend, setSelectedFriend }) => {
     if (!currentUserId) return;
     
     const SOCKET_URL = new URL(api.defaults.baseURL).origin;
-    console.log('Connecting to socket at:', SOCKET_URL);
 
     // Create socket connection if it doesn't exist
     if (!socketRef.current) {
@@ -61,11 +60,9 @@ const ChatScreen = ({ selectedFriend, setSelectedFriend }) => {
       const socket = socketRef.current;
 
       const handleConnect = () => {
-        console.log('Socket connected');
         setSocketError(false);
         // Join user's personal room
         socket.emit('join_user_room', currentUserId);
-        console.log('Joined user room:', currentUserId);
       };
 
       const handleConnectError = (err) => {
@@ -75,7 +72,6 @@ const ChatScreen = ({ selectedFriend, setSelectedFriend }) => {
       };
 
       const handleDisconnect = (reason) => {
-        console.log('Socket disconnected:', reason);
         if (reason === 'io server disconnect') {
           // Reconnect if server disconnects
           socket.connect();
@@ -83,11 +79,13 @@ const ChatScreen = ({ selectedFriend, setSelectedFriend }) => {
       };
 
       const handleNewMessage = (msg) => {
-        console.log('Received new message via socket:', msg);
-        
         // Skip if message is missing required fields
         if (!msg || (!msg._id && !msg.localId)) {
-          console.warn('Received invalid message format:', msg);
+          return;
+        }
+        
+        // Don't process our own messages from other tabs/devices
+        if (String(msg.sender?._id || msg.sender) === String(currentUserId)) {
           return;
         }
         
@@ -104,33 +102,32 @@ const ChatScreen = ({ selectedFriend, setSelectedFriend }) => {
         };
         
         setMessages(prev => {
-          // Generate a unique key for each message
-          const messageKey = normalizedMsg._id || normalizedMsg.localId;
-          
           // Check if message already exists to prevent duplicates
-          const existingIndex = prev.findIndex(m => 
-            (m._id && m._id === normalizedMsg._id) || 
-            (m.localId && m.localId === normalizedMsg.localId) ||
-            (m._id && normalizedMsg._id && m._id === normalizedMsg._id) ||
-            (m.localId && normalizedMsg.localId && m.localId === normalizedMsg.localId)
-          );
+          const isDuplicate = prev.some(m => {
+            // Match by server ID if available
+            if (m._id && normalizedMsg._id && m._id === normalizedMsg._id) return true;
+            
+            // Match by local ID if available
+            if (m.localId && normalizedMsg.localId && m.localId === normalizedMsg.localId) return true;
+            
+            // Match by content and timestamp if IDs don't match
+            if (m.content === normalizedMsg.content && 
+                m.sender === normalizedMsg.sender &&
+                m.recipient === normalizedMsg.recipient &&
+                Math.abs(new Date(m.createdAt) - new Date(normalizedMsg.createdAt)) < 5000) {
+              return true;
+            }
+            
+            return false;
+          });
           
-          if (existingIndex >= 0) {
-            // Update existing message if needed
-            const updated = [...prev];
-            updated[existingIndex] = {
-              ...updated[existingIndex],
-              ...normalizedMsg,
-              // Preserve existing localId if it exists
-              localId: updated[existingIndex].localId || normalizedMsg.localId
-            };
-            return updated;
-          } else {
-            // Add new message
-            const updated = [...prev, normalizedMsg]
-              .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            return updated;
+          if (isDuplicate) {
+            return prev;
           }
+          
+          // Add new message and sort by timestamp
+          return [...prev, normalizedMsg]
+            .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         });
         
         // Mark as read if it's a new message from the current conversation
@@ -164,7 +161,6 @@ const ChatScreen = ({ selectedFriend, setSelectedFriend }) => {
       if (process.env.NODE_ENV === 'development') {
         const originalEmit = socket.emit;
         socket.emit = function() {
-          console.log('Emitting event:', arguments[0], arguments[1]);
           return originalEmit.apply(socket, arguments);
         };
       }
@@ -173,7 +169,6 @@ const ChatScreen = ({ selectedFriend, setSelectedFriend }) => {
     // Clean up on unmount
     return () => {
       if (socketRef.current) {
-        console.log('Cleaning up socket connection');
         socketRef.current.off('connect');
         socketRef.current.off('connect_error');
         socketRef.current.off('disconnect');
@@ -266,7 +261,6 @@ const ChatScreen = ({ selectedFriend, setSelectedFriend }) => {
         const sorted = (res.data || []).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         setMessages(sorted);
         setLoading(false);
-        console.log('Fetched messages:', sorted);
       })
       .catch(() => {
         api.get(`/messages/${selectedFriend._id}`)
@@ -588,15 +582,15 @@ const ChatScreen = ({ selectedFriend, setSelectedFriend }) => {
 
           {/* Message Input */}
           <div className="p-4 bg-blueHorizontalGradient border-t border-blue-400/30">
-            <div className="relative flex items-center bg-gray-50 rounded-xl px-4 py-2 shadow-inner">
-              <button 
+            <div className="relative flex items-center bg-gray-50 rounded-full px-4 py-2 shadow-inner">
+              {/* <button 
                 className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-100"
                 aria-label="Add attachment"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
                 </svg>
-              </button>
+              </button> */}
               <input
                 ref={inputRef}
                 type="text"

@@ -73,7 +73,8 @@ const Community = () => {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [selectedPostForReport, setSelectedPostForReport] = useState(null);
   const dropdownRef = useRef(null);
-  const navigate = useNavigate(); // For Challenges redirect
+  const navigate = useNavigate(); // For navigation
+
 
   // Fetch posts based on active tab and type
   const fetchPosts = async () => {
@@ -246,28 +247,27 @@ const Community = () => {
   // Handle like action
   const handleLike = async (postId) => {
     try {
-      // Find the post being liked/unliked
-      
-      console.log('handleLike called for postId:', postId);
       const postToUpdate = posts.find(post => post._id === postId);
       if (!postToUpdate) return;
 
-      // Determine if this is a like or unlike action
       const isLiked = postToUpdate.likes?.includes(currentUser?._id);
+      
+      // Calculate the new like count
+      const currentLikeCount = postToUpdate.likeCount || postToUpdate.likes?.length || 0;
+      const newLikeCount = isLiked ? Math.max(0, currentLikeCount - 1) : currentLikeCount + 1;
+      
+      // Get the updated likes array
+      const updatedLikes = isLiked 
+        ? (postToUpdate.likes || []).filter(id => id !== currentUser?._id) // Remove like
+        : [...(postToUpdate.likes || []), currentUser?._id]; // Add like
       
       // Optimistic UI update - immediately update the UI
       setPosts(posts.map(post => {
         if (post._id === postId) {
-          const updatedLikes = isLiked 
-            ? post.likes.filter(id => id !== currentUser?._id) // Remove like
-            : [...(post.likes || []), currentUser?._id]; // Add like
-          
           return {
             ...post,
             likes: updatedLikes,
-            likeCount: isLiked 
-              ? Math.max(0, (post.likeCount || post.likes?.length || 1) - 1) // Ensure count doesn't go below 0
-              : (post.likeCount || post.likes?.length || 0) + 1
+            likeCount: newLikeCount
           };
         }
         return post;
@@ -275,10 +275,10 @@ const Community = () => {
 
       try {
         const API_BASE_URL = import.meta.env.MODE === 'development' 
-? 'http://localhost:5000/api' 
-:  `${import.meta.env.VITE_API_BACKEND_URL}/api`;
+          ? 'http://localhost:5000/api' 
+          : `${import.meta.env.VITE_API_BACKEND_URL}/api`;
 
-        // API call to like/unlike post using postService
+        // API call to like/unlike post
         const response = await fetch(`${API_BASE_URL}/posts/${isLiked ? 'unlike' : 'like'}`, {
           method: 'POST',
           headers: {
@@ -288,17 +288,27 @@ const Community = () => {
           body: JSON.stringify({ postId })
         });
 
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        const serverUpdatedPost = responseData?.data || responseData;
+
         // Update the post with the server response
         setPosts(posts.map(post => {
           if (post._id === postId) {
             return {
               ...post,
-              likes: updatedPost.likes || post.likes,
-              likeCount: updatedPost.likeCount || post.likeCount
+              likes: serverUpdatedPost.likes || updatedLikes,
+              likeCount: serverUpdatedPost.likeCount !== undefined 
+                ? serverUpdatedPost.likeCount 
+                : newLikeCount
             };
           }
           return post;
         }));
+
       } catch (apiError) {
         console.error('API Error in handleLike:', apiError);
         // If API call fails, show error but don't revert UI (better UX)
@@ -412,22 +422,8 @@ const Community = () => {
     try {
       // Ensure we have a valid current user
       if (!currentUser?._id) {
-        throw new Error('You must be logged in to comment');
-      }
-
-      // Get fresh user data to ensure we have the latest profile info
-      let userData;
-      try {
-        userData = await fetchUserProfile(currentUser._id);
-      } catch (error) {
-        console.error('Error fetching current user data:', error);
-        // Fallback to existing data if fetch fails
-        userData = {
-          _id: currentUser._id,
-          username: currentUser.username || 'user',
-          fullName: currentUser.fullName || currentUser.username || 'User',
-          profilePicture: currentUser.profilePicture
-        };
+        toast.error('You must be logged in to comment');
+        return;
       }
 
       // Create a temporary comment for optimistic UI
@@ -435,20 +431,25 @@ const Community = () => {
       const newComment = {
         _id: tempCommentId,
         content: commentText,
-        user: userData,
+        user: {
+          _id: currentUser._id,
+          username: currentUser.username || 'user',
+          fullName: currentUser.fullName || currentUser.username || 'User',
+          profilePicture: currentUser.profilePicture
+        },
         createdAt: new Date().toISOString(),
         isTemp: true
       };
 
-      // Optimistic UI update
+      // Optimistic UI update - add new comment at the beginning
       setPosts(prevPosts => 
         prevPosts.map(post => {
           if (post._id === postId) {
             const currentComments = Array.isArray(post.comments) ? post.comments : [];
             return {
               ...post,
-              comments: [...currentComments, newComment],
-              commentCount: (post.commentCount || currentComments.length) + 1
+              comments: [newComment, ...currentComments],
+              commentCount: (post.commentCount || 0) + 1
             };
           }
           return post;
@@ -466,34 +467,32 @@ const Community = () => {
         const response = await postService.addComment(postId, commentText);
         
         if (response) {
-          // Process the server's response to ensure we have user data
-          const processedComments = await processComments([response]);
-          const serverComment = processedComments[0];
+          // Create a proper comment object from the response
+          const serverComment = {
+            _id: response._id || `server-${Date.now()}`,
+            content: response.content || commentText,
+            user: currentUser,
+            createdAt: response.createdAt || new Date().toISOString(),
+            ...(response.user ? { user: response.user } : {})
+          };
           
-          if (serverComment) {
-            // Update the post with the server's response
-            setPosts(prevPosts => 
-              prevPosts.map(post => {
-                if (post._id === postId) {
-                  // Remove temp comment and add the server's comment with user data
-                  const filteredComments = (post.comments || []).filter(
-                    c => !c.isTemp || c._id !== tempCommentId
-                  );
-                  
-                  return {
-                    ...post,
-                    comments: [...filteredComments, serverComment],
-                    commentCount: post.commentCount || filteredComments.length + 1
-                  };
-                }
-                return post;
-              })
-            );
-          }
-          
-          return response.data;
-        } else {
-          throw new Error('Failed to add comment: Invalid server response');
+          // Update the post with the server's response
+          setPosts(prevPosts => 
+            prevPosts.map(post => {
+              if (post._id === postId) {
+                // Remove temp comment and add the server's comment
+                const filteredComments = (post.comments || [])
+                  .filter(c => c._id !== tempCommentId);
+                
+                return {
+                  ...post,
+                  comments: [serverComment, ...filteredComments],
+                  commentCount: post.commentCount || filteredComments.length + 1
+                };
+              }
+              return post;
+            })
+          );
         }
       } catch (apiError) {
         console.error('API Error in handleComment:', apiError);
@@ -501,20 +500,19 @@ const Community = () => {
         setPosts(prevPosts => 
           prevPosts.map(post => {
             if (post._id === postId) {
-              const filteredComments = (post.comments || []).filter(
-                comment => comment?._id !== tempCommentId
-              );
+              const filteredComments = (post.comments || [])
+                .filter(comment => comment?._id !== tempCommentId);
               
               return {
                 ...post,
                 comments: filteredComments,
-                commentCount: Math.max(0, (post.commentCount || 0) - 1)
+                commentCount: Math.max(0, (post.commentCount || 1) - 1)
               };
             }
             return post;
           })
         );
-        throw new Error(apiError.message || 'Failed to add comment');
+        toast.error(apiError.response?.data?.message || 'Failed to add comment');
       }
     } catch (error) {
       console.error('Error in handleComment:', error);
@@ -683,9 +681,7 @@ const Community = () => {
         return;
       }
 
-      console.log('File is valid, creating preview URL...');
       const previewUrl = URL.createObjectURL(file);
-      console.log('Preview URL created:', previewUrl);
       
       setSelectedFile(file);
       setFileType(file.type.startsWith('image/') ? 'image' : 'video');
@@ -751,7 +747,6 @@ const Community = () => {
   }, [posts, activeType]);
 
   const handleCreatePost = async () => {
-    console.log('handleCreatePost called');
     
     if (!newPostContent.trim() && !selectedFile) {
       const errorMsg = 'Please add some content or a file to your post';
@@ -761,7 +756,6 @@ const Community = () => {
     }
 
     try {
-      console.log('Starting post creation...');
       setIsCreatingPost(true);
       
       // Prepare post data
@@ -770,9 +764,6 @@ const Community = () => {
         tags: '' // Add tags if needed
       };
       
-      // Log request data
-      console.log('Post data:', postData);
-      
       let fileToUpload = null;
       if (selectedFile) {
         // Create a new File object to ensure we have all the necessary properties
@@ -780,17 +771,8 @@ const Community = () => {
           type: selectedFile.type,
           lastModified: selectedFile.lastModified
         });
-        
-        console.log('File to upload:', {
-          name: fileToUpload.name,
-          type: fileToUpload.type,
-          size: fileToUpload.size,
-          lastModified: fileToUpload.lastModified
-        });
       }
       
-      console.log('Sending request to create post...');
-      // Call postService with the post data and file (if any)
       const response = await postService.createPost(postData, fileToUpload || null);
       
       if (!response) {
@@ -799,14 +781,8 @@ const Community = () => {
         throw new Error(errorMsg);
       }
       
-      console.log('Server response:', response);
-      
-      // Get current user data
-      console.log('Fetching current user profile...');
       const currentUser = await authService.getCurrentUserProfile();
-      console.log('Current user data:', currentUser);
       
-      // Create new post object with proper media handling
       const newPost = {
         ...(response.data?.post || response), // Handle both response formats
         _id: response.data?.post?._id || response._id || `temp-${Date.now()}`,
@@ -820,19 +796,6 @@ const Community = () => {
           type: response.data?.mediaType || response.mediaType || (selectedFile ? selectedFile.type : null)
         }
       };
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Created new post:', {
-          ...newPost,
-          media: newPost.media ? {
-            ...newPost.media,
-            // Don't log the entire URL if it's a blob URL as it can be very long
-            url: newPost.media.url?.startsWith('blob:') ? 
-                 '[Blob URL]' : 
-                 newPost.media.url
-          } : null
-        });
-      }
       
       // Update UI
       setPosts(prevPosts => [newPost, ...prevPosts]);
@@ -913,6 +876,9 @@ const Community = () => {
       navigate('/challenges'); // Navigate to the dedicated challenges page
     } else if (tabId === 'leaderboard') {
       navigate('/community/leaderboard'); // Navigate to the leaderboard page
+    } else if (tabId === 'followers') {
+      window.location.href = '/users'; // Full page navigation to users page
+      return;
     } else {
       setActiveTab(tabId);
     }

@@ -10,26 +10,12 @@ const postService = {
   
   async createPost(postData = {}, file = null) {
     const requestId = `req_${Date.now()}`;
-    console.log(`[PostService][${requestId}] 🚀 Starting createPost`);
     
     try {
       // Input validation
       if (!postData && !file) {
         throw new Error('Either post content or a file is required');
       }
-
-      // Log input data (safely)
-      console.log(`[PostService][${requestId}] Input data:`, {
-        contentLength: postData?.content?.length || 0,
-        hasFile: !!file,
-        tags: postData?.tags,
-        fileInfo: file ? {
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          isFile: file instanceof File
-        } : null
-      });
 
       const formData = new FormData();
       
@@ -38,7 +24,6 @@ const postService = {
         const content = String(postData.content).trim();
         if (content) {
           formData.append('content', content);
-          console.log(`[PostService][${requestId}] ✅ Added content (${content.length} chars)`);
         } else {
           formData.append('content', '');
         }
@@ -53,22 +38,17 @@ const postService = {
         const validTags = tagsArray.filter(tag => tag && typeof tag === 'string');
         
         formData.append('tags', JSON.stringify(validTags));
-        console.log(`[PostService][${requestId}] ✅ Added ${validTags.length} tags`);
       } catch (tagError) {
-        console.warn(`[PostService][${requestId}] ⚠️ Error processing tags, using empty array`, tagError);
         formData.append('tags', JSON.stringify([]));
       }
       
       // Handle file upload if present
       if (file) {
-        console.log(`[PostService][${requestId}] 📂 Processing file upload...`);
         try {
-          console.log(file);
           let fileToUpload = file;
           
           // Ensure we have a proper File object
           if (!(fileToUpload instanceof File)) {
-            console.log(`[PostService][${requestId}] 🔄 Converting to File instance`);
             const fileExtension = fileToUpload.name?.split('.').pop() || 'jpg';
             fileToUpload = new File(
               [fileToUpload], 
@@ -89,11 +69,6 @@ const postService = {
           }
           
           formData.append('image', fileToUpload);
-          console.log(`[PostService][${requestId}] ✅ File ready:`, {
-            name: fileToUpload.name,
-            type: fileToUpload.type,
-            size: `${(fileToUpload.size / 1024).toFixed(2)}KB`
-          });
           
         } catch (fileError) {
           console.error(`[PostService][${requestId}] ❌ File processing failed:`, {
@@ -103,18 +78,6 @@ const postService = {
             fileSize: file?.size
           });
           throw new Error(`File upload failed: ${fileError.message}`);
-        }
-      }
-
-      // Log form data structure (safely)
-    
-      for (let [key, value] of formData.entries()) {
-        if (value instanceof File) {
-          console.log(`- ${key}: [File] ${value.name} (${(value.size / 1024).toFixed(2)}KB)`);
-        } else if (typeof value === 'string' && value.length > 50) {
-          console.log(`- ${key}: ${value.substring(0, 50)}... [${value.length} chars]`);
-        } else {
-          console.log(`- ${key}:`, value);
         }
       }
 
@@ -298,32 +261,17 @@ const postService = {
    * @returns {Promise<Object>} Updated post data
    */
   async likePost(postId, isLiked) {
-    console.log(`[PostService] ${isLiked ? 'Unliking' : 'Liking'} post:`, {
-      postId,
-      timestamp: new Date().toISOString()
-    });
-
     try {
       const endpoint = isLiked ? `/posts/unlike` : `/posts/like`;
-      console.log('[PostService] Using endpoint:', endpoint);
-      
-      // Get the current user's ID from localStorage or auth context
+
      
-      console.log("this is post id", postId);
       // Prepare request data
       const requestData = { 
         postId
       
       };
       
-      console.log('[PostService] Sending like/unlike request:', requestData);
-      
       const response = await api.post(endpoint, requestData);
-      
-      console.log(`[PostService] Successfully ${isLiked ? 'unliked' : 'liked'} post:`, {
-        postId,
-        response: response.data
-      });
       
       return response.data;
     } catch (error) {
@@ -339,32 +287,41 @@ const postService = {
    * @returns {Promise<Object>} Created comment data
    */
   async addComment(postId, content) {
-    console.log('[PostService] Adding comment:', {
-      postId,
-      contentLength: content?.length || 0,
-      timestamp: new Date().toISOString()
-    });
 
     try {
-      const endpoint = `/posts/${postId}/comments`;
+      const API_BASE_URL = import.meta.env.MODE === 'development' 
+        ? 'http://localhost:5000/api' 
+        : `${import.meta.env.VITE_API_BACKEND_URL}/api`;
+      
+      const endpoint = `${API_BASE_URL}/posts/${postId}/comments`;
       const requestData = { content };
       
-      console.log('[PostService] Sending comment request:', {
-        endpoint,
-        contentPreview: content?.substring(0, 50) + (content?.length > 50 ? '...' : '')
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(requestData),
+        credentials: 'include' // Important for cookies if using them
       });
       
-      const response = await api.post(endpoint, requestData);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const error = new Error(errorData.message || 'Failed to add comment');
+        error.response = { data: errorData };
+        throw error;
+      }
       
-      console.log('[PostService] Successfully added comment:', {
-        postId,
-        commentId: response.data?._id,
-        timestamp: new Date().toISOString()
-      });
+      const responseData = await response.json();
       
-      return response.data;
+      return responseData;
     } catch (error) {
       console.error('Error adding comment:', error);
+      // Enhance error with more context
+      if (!error.response) {
+        error.response = { data: { message: 'Network error. Please check your connection.' } };
+      }
       throw error;
     }
   },
