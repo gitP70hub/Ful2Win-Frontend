@@ -61,13 +61,12 @@ const Challenges = () => {
       
       const userData = JSON.parse(localStorage.getItem('user'));
       // Separate incoming and outgoing challenges
-      console.log(userData._id);
       const incoming = allChallenges.filter(challenge => 
         challenge.challenged._id === userData._id && 
         challenge.status === 'pending'
       );
       const outgoing = allChallenges.filter(challenge => 
-        challenge.challenger._id === localStorage.getItem('userId') && 
+        challenge.challenger._id === userData._id && 
         challenge.status === 'pending'
       );
       
@@ -158,10 +157,11 @@ const Challenges = () => {
     }
   };
 
-  const handleAcceptInvite = async (challengeId) => {
+  const handleAcceptInvite = async (challengeId , gameId) => {
     try {
       await api.put(`/challenges/${challengeId}/accept`);
       toast.success('Challenge accepted successfully');
+      navigate(`/tournament-lobby/${gameId}`); // Redirect to game page after accepting
       fetchChallenges();
     } catch (error) {
       console.error('Error accepting challenge:', error);
@@ -340,7 +340,7 @@ const Challenges = () => {
               <div className="text-black">
                 <h2 className="text-lg font-semibold mb-3 text-red-700">Incoming Invites</h2>
                 {incomingInvites.map((invite) => (
-                  
+                  console.log(invite),
                   <div key={invite._id} className="flex justify-between items-center mb-3 p-3 border rounded">
                     <div className="flex items-center gap-3">
                       <img
@@ -358,7 +358,7 @@ const Challenges = () => {
                     </div>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => handleAcceptInvite(invite._id)}
+                        onClick={() => handleAcceptInvite(invite._id, invite.game._id)}
                         className="bg-green-100 text-green-700 px-3 py-1 rounded hover:bg-green-200 text-sm"
                       >
                         Accept
