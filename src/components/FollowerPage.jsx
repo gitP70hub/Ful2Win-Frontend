@@ -67,9 +67,9 @@ function FollowerPage() {
     <>
       <div className="min-h-screen bg-gradient-to-b from-[#0b3fae] via-[#1555d1] to-[#2583ff] text-white pb-24 overflow-hidden">
         <BackgroundBubbles />
-        <div className="relative z-10">
+        <div className="relative z-10 w-full">
           <Header />
-          <div className="pt-20 px-4 max-w-4xl mx-auto">
+          <div className="pt-20 px-4 sm:px-6 md:px-8 w-full max-w-6xl mx-auto">
             {/* Back button + Heading */}
             <div className="flex items-center justify-center gap-3 mb-6 relative">
               <button
@@ -78,7 +78,7 @@ function FollowerPage() {
               >
                 &#8249;
               </button>
-              <h1 className="text-2xl sm:text-3xl font-bold text-center text-blue-100">
+              <h1 className="text-2xl sm:text-3xl font-bold text-center text-blue-100 whitespace-nowrap">
                 Community Members
               </h1>
             </div>
@@ -138,18 +138,14 @@ function FollowerPage() {
                 </div>
               </div>
             ) : (
-              <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
                 {filteredUsers.map((user) => (
                   <div
                     key={user._id}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedChatUser(user);
-                      }}
+                    onClick={() => navigate(`/profile/${user._id}`)}
                     className="bg-white/10 backdrop-blur-lg rounded-xl p-4 flex items-center space-x-4 hover:bg-white/20 cursor-pointer transition-colors duration-200"
                   >
                     <img
-                     onClick={() => navigate(`/profile/${user._id}`)}
                       src={
                         user.profilePicture ||
                         user.avatar ||
@@ -177,11 +173,6 @@ function FollowerPage() {
                           @{user.username}
                         </p>
                       )}
-                      {/* {user.bio && (
-                        <p className="text-sm text-white/70 mt-1 line-clamp-2">
-                          {user.bio}
-                        </p>
-                      )} */}
                     </div>
                     <button
                       onClick={(e) => {

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { GiTwoCoins } from 'react-icons/gi';
 import { FaRedoAlt, FaPlay, FaBolt } from 'react-icons/fa';
@@ -31,7 +30,7 @@ const Wallet = () => {
     try {
       setRefreshing(true);
       const userData = await authService.getCurrentUserProfile();
-      
+
       if (userData) {
         setWalletData(prev => ({
           ...prev,
@@ -46,8 +45,7 @@ const Wallet = () => {
     } catch (error) {
       console.error('Error fetching user data:', error);
       toast.error('Failed to load wallet data');
-      
-      // Fallback to local storage if available
+
       const localUser = JSON.parse(localStorage.getItem('user') || '{}');
       if (localUser) {
         setWalletData(prev => ({
@@ -93,7 +91,7 @@ const Wallet = () => {
       <div className="relative z-10">
         <Header />
 
-        <div className="pt-20 mt-7  px-4 max-w-4xl mx-auto space-y-6">
+        <div className="pt-20 mt-7 px-4 max-w-4xl mx-auto space-y-6">
           {/* Wallet Card */}
           <div className="w-full border border-white/30 rounded-xl text-white text-center p-4">
             {/* Profile Picture */}
@@ -114,66 +112,64 @@ const Wallet = () => {
                 </div>
               )}
             </div>
-            
 
             {/* Coins Section */}
             <div className="flex flex-col items-center gap-1">
               <div className="flex items-center gap-2">
-              <p className="text-white/80 text-sm">Coins</p>
-              <button 
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="text-white/60 hover:text-white transition-colors"
-              >
-                <FaRedoAlt size={14} className={refreshing ? 'animate-spin' : ''} />
-              </button>
-            </div>
-            <h3 className="text-lg font-semibold text-yellow-300 flex items-center gap-1">
-              {walletData.coins.toLocaleString()} <GiTwoCoins size={18} />
-            </h3>
+                <p className="text-white/80 text-sm">Coins</p>
+                <button 
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="text-white/60 hover:text-white transition-colors"
+                >
+                  <FaRedoAlt size={14} className={refreshing ? 'animate-spin' : ''} />
+                </button>
+              </div>
+              <h3 className="text-lg font-semibold text-yellow-300 flex items-center gap-1">
+                {walletData.coins.toLocaleString()} <GiTwoCoins size={18} />
+              </h3>
             </div>
 
             <div className="my-3 h-[1px] w-full bg-white/30" />
 
-            {/* Row: Deposit | Winning | Bonus */}
-            <div className="flex justify-between text-sm sm:text-base font-medium">
-              <div className="flex-1">
+            {/* Row: Balance | Winning | Bonus */}
+            <div className="flex flex-wrap justify-between text-sm sm:text-base font-medium text-center gap-4">
+              <div className="flex-1 min-w-[100px]">
                 <p className="text-white/80">Balance</p>
                 <p className="text-yellow-300">₹{walletData.balance.toLocaleString()}</p>
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-[100px]">
                 <p className="text-white/80">Winning</p>
                 <h2 className="text-lg font-bold text-green-400">₹ {walletData.winning}</h2>
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-[100px]">
                 <p className="text-white/80">Bonus</p>
                 <h2 className="text-lg font-bold text-yellow-300">₹ {walletData.bonus}</h2>
               </div>
             </div>
 
-           <div className="my-3 h-[1px] w-full bg-white/30" />
-         
+            <div className="my-3 h-[1px] w-full bg-white/30" />
 
-          {/* Action Buttons */}
-          <div className="flex flex-col gap-3">
-            <button
-              className="w-full py-3 rounded-xl bg-yellow-400 text-blue-900 font-bold text-lg shadow-md hover:bg-yellow-300 transition"
-              onClick={() => navigate('/add')}
-            >
-              ADD ₹
-            </button>
-            <button
-              className="w-full py-3 rounded-xl border border-blue-300 bg-blue-900/60 text-white hover:bg-white/10 transition"
-              onClick={() => navigate('/withdraw')}
-            >
-              WITHDRAW ₹ (Winning Only)
-            </button>
-            <p className="text-xs text-yellow-100 text-center">
-              After KYC<br />
-              Only Winning Amount is Withdrawable
-            </p>
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-3">
+              <button
+                className="w-full py-3 rounded-xl bg-yellow-400 text-blue-900 font-bold text-lg shadow-md hover:bg-yellow-300 transition"
+                onClick={() => navigate('/add')}
+              >
+                ADD ₹
+              </button>
+              <button
+                className="w-full py-3 rounded-xl border border-blue-300 bg-blue-900/60 text-white hover:bg-white/10 transition"
+                onClick={() => navigate('/withdraw')}
+              >
+                WITHDRAW ₹ (Winning Only)
+              </button>
+              <p className="text-xs text-yellow-100 text-center">
+                After KYC<br />
+                Only Winning Amount is Withdrawable
+              </p>
+            </div>
           </div>
-           </div>
 
           {/* Quick Access Buttons */}
           <div className="flex justify-center gap-4 mt-6 flex-wrap">

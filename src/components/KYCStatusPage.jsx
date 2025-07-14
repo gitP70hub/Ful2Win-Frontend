@@ -7,7 +7,7 @@ import { FaArrowLeft } from 'react-icons/fa';
 
 const STATUS = {
   NOT_SUBMITTED: {
-    icon: '🕵',
+    icon: '',
     text: 'Not Submitted',
     desc: 'Start your KYC to unlock rewards!',
     cardClass: 'status-not-submitted',
@@ -52,15 +52,18 @@ const Popup = ({ title, message, onClose, inputMode = false, onInputSubmit }) =>
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-white rounded-xl p-6 relative w-[90%] max-w-md" onClick={(e) => e.stopPropagation()}>
-        <button className="absolute top-2 right-3 text-gray-600 text-xl font-bold" onClick={onClose}>×</button>
+      <div
+        className="backdrop-blur-md bg-white/10 border border-white/20 text-white rounded-xl p-6 relative w-[90%] max-w-md shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button className="absolute top-2 right-3 text-white text-xl font-bold" onClick={onClose}>×</button>
         <h2 className="text-xl font-semibold mb-2">{title}</h2>
-        <p className="text-gray-700 mb-2">{message}</p>
+        <p className="text-sm mb-2">{message}</p>
         {inputMode && (
           <div className="mt-4">
             <input
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+              className="w-full px-3 py-2 border border-white/30 bg-white/10 text-white rounded-md placeholder-white/70 focus:outline-none"
               placeholder="Enter PAN"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
@@ -129,10 +132,11 @@ const KYCStatusPage = () => {
           <h1 className="text-xl font-semibold text-center">KYC Status</h1>
         </div>
 
-        <div className={`rounded-xl p-6 text-center bg-white text-gray-800 shadow-lg mb-6 ${statusObj.cardClass}`}>
+        {/* Glassmorphic Status Card */}
+        <div className={`rounded-xl p-6 text-center text-white backdrop-blur-md bg-white/10 border border-white/20 shadow-lg mb-6 ${statusObj.cardClass}`}>
           <div className="text-4xl mb-2">{statusObj.icon}</div>
           <div className="text-lg font-semibold">{statusObj.text}</div>
-          <div className="text-sm text-gray-600 mt-1">{statusObj.desc}</div>
+          <div className="text-sm text-white/70 mt-1">{statusObj.desc}</div>
         </div>
 
         {status === 'NOT_SUBMITTED' && (
@@ -141,21 +145,16 @@ const KYCStatusPage = () => {
               Submit KYC
             </button>
             <ul className="space-y-3 text-left">
-              <li>
-                <button onClick={() => handleStepClick('document')} className="w-full bg-blue-100 text-blue-800 px-4 py-2 rounded-md">
-                  Upload ID
-                </button>
-              </li>
-              <li>
-                <button onClick={() => handleStepClick('selfie')} className="w-full bg-blue-100 text-blue-800 px-4 py-2 rounded-md">
-                  Take Selfie
-                </button>
-              </li>
-              <li>
-                <button onClick={() => handleStepClick('pan')} className="w-full bg-blue-100 text-blue-800 px-4 py-2 rounded-md">
-                  Enter PAN
-                </button>
-              </li>
+              {['document', 'selfie', 'pan'].map((step) => (
+                <li key={step}>
+                  <button
+                    onClick={() => handleStepClick(step)}
+                    className="w-full backdrop-blur-md bg-white/10 border border-white/20 text-white px-4 py-2 rounded-md hover:bg-white/20"
+                  >
+                    {step === 'document' ? 'Upload ID' : step === 'selfie' ? 'Take Selfie' : 'Enter PAN'}
+                  </button>
+                </li>
+              ))}
             </ul>
             <input type="file" ref={fileInputRef} className="hidden" accept="image/*,application/pdf" />
           </div>
@@ -169,14 +168,14 @@ const KYCStatusPage = () => {
         )}
 
         {status === 'VERIFIED' && (
-          <div className="text-center mt-6 text-green-600">
+          <div className="text-center mt-6 text-green-400">
             <div className="text-3xl">✅</div>
             <p className="font-semibold mt-2">You're Verified! Withdrawals are unlocked.</p>
           </div>
         )}
 
         {status === 'REJECTED' && (
-          <div className="text-center mt-6 text-red-600">
+          <div className="text-center mt-6 text-red-400">
             <div className="text-3xl">❌</div>
             <p className="font-semibold mt-2">KYC Rejected: {mockUser.rejectionReason}</p>
             <button onClick={handleResubmit} className="mt-4 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg">
@@ -186,7 +185,7 @@ const KYCStatusPage = () => {
         )}
 
         {(status === 'VERIFIED' || status === 'REJECTED' || status === 'PENDING') && (
-          <div className="mt-6 bg-white text-gray-800 rounded-lg p-4 shadow-sm">
+          <div className="mt-6 backdrop-blur-md bg-white/10 border border-white/20 text-white rounded-lg p-4 shadow-sm space-y-1">
             <div><b>Name:</b> {mockUser.name}</div>
             <div><b>PAN:</b> {mockUser.pan}</div>
             <div><b>Submitted:</b> {mockUser.submitted}</div>

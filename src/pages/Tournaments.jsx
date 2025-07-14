@@ -136,10 +136,12 @@ const Tournaments = () => {
       <BackgroundBubbles />
       <Header />
 
-      <main className="container mx-auto px-4 py-8 relative z-10">
-        <div className="flex flex-col space-y-6 mb-6">
-          <h1 className="text-3xl font-bold">Games</h1>
-          <div className="relative">
+      <main className="container mx-auto px-4 py-8 pb-32 relative z-10">
+        <div className="mb-6">
+          <div className="sticky top-14 z-20 pt-2 pb-4">
+            <h1 className="text-3x1 font-bold">Tournament Games</h1>
+          </div>
+          <div className="relative mt-4">
             <input
               type="text"
               placeholder="Search games..."
@@ -169,7 +171,7 @@ const Tournaments = () => {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-3">
             {getFilteredGames().map((game) => {
               const gameId = game._id || game.id;
               const displayName = game.displayName || game.name;
@@ -178,54 +180,47 @@ const Tournaments = () => {
               return (
                 <div
                   key={gameId}
-                  className="group bg-black/30 border border-white/10 rounded-xl overflow-hidden hover:border-yellow-400/50 transition-all duration-300 cursor-pointer text-sm flex flex-col max-w-[160px] mx-auto"
+                  className="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-gray-700/50 hover:border-yellow-400/50 transition-all cursor-pointer flex flex-col"
                   onClick={() => handleViewGameTournaments(gameId)}
                 >
-                  <div className="relative w-full h-40 bg-black overflow-hidden rounded-t-xl">
+                  <div className="aspect-square bg-gray-900 relative overflow-hidden">
                     {thumbnail ? (
                       <img
                         src={thumbnail}
                         alt={displayName}
-                        className="w-full h-full object-contain rounded-t-xl"
+                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                         onError={(e) => {
                           e.target.onerror = null;
-                          e.target.src = '/placeholder-game.jpg';
+                          e.target.src = 'https://via.placeholder.com/400x225/1a1a2e/ffffff?text=Game+Image';
                         }}
+                        loading="lazy"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-800 rounded-t-xl">
+                      <div className="w-full h-full flex items-center justify-center bg-gray-800">
                         <FaGamepad className="text-4xl text-yellow-500 opacity-50" />
                       </div>
                     )}
-                    <div className="absolute top-2 left-2">
-                      <span className="text-[10px] bg-yellow-500 text-gray-900 font-semibold px-2 py-0.5 rounded-full">
-                        {game.tournamentCount || 0} Tournaments
-                      </span>
-                    </div>
                   </div>
-
-                  <div className="p-2 flex flex-col flex-1">
-                    <h3 className="font-bold truncate">{displayName}</h3>
-                    {game.type && (
-                      <p className="text-[10px] text-yellow-400 bg-yellow-900/30 px-2 py-0.5 rounded-full inline-block mb-1">
-                        {game.type}
-                      </p>
-                    )}
-                    <p className="text-xs text-gray-400 line-clamp-2 flex-1">{game.description}</p>
-
-                    <div className="pt-2 mt-auto border-t border-gray-700/40 flex items-center justify-between">
-                      <div className="flex items-center text-xs">
-                        <FaUsers className="text-yellow-500 mr-1" />
-                        {formatPlayerCount(game.activePlayers || 0, game.maxPlayers || 0)}
+                  <div className={`${game.tournamentCount > 0 ? 'p-2.5' : 'p-1.5'} flex-1 flex flex-col min-w-0`}>
+                    <h3 
+                      className="font-bold text-white text-center mb-1 truncate text-[11px] min-w-0"
+                      title={displayName}
+                    >
+                      {displayName}
+                    </h3>
+                    <div className="flex flex-col gap-1 sm:flex-row sm:justify-between items-center mt-auto w-full">
+                      <div className="flex items-center text-[9px] text-gray-300 min-w-0">
+                        <FaUsers className="mr-1 text-yellow-500 text-[8px] flex-shrink-0" />
+                        <span className="truncate">{formatPlayerCount(game.activePlayers || 0, game.maxPlayers || 0)}</span>
                       </div>
                       <button
-                        className="ml-2 px-2 py-1 bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-semibold text-xs rounded flex items-center"
+                        className={`bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-semibold text-[9px] rounded flex items-center transition-colors w-full sm:w-auto justify-center mt-1 sm:mt-0 ${game.tournamentCount > 0 ? 'px-2 py-1' : 'px-1.5 py-0.5'}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleViewGameTournaments(gameId);
                         }}
                       >
-                        <FaTrophy className="mr-1 text-xs" />
+                        <FaTrophy className="mr-1 text-[8px]" />
                         View
                       </button>
                     </div>
