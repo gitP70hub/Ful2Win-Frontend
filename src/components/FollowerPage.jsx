@@ -142,7 +142,10 @@ function FollowerPage() {
                 {filteredUsers.map((user) => (
                   <div
                     key={user._id}
-                    onClick={() => navigate(`/profile/${user._id}`)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedChatUser(user);
+                    }}
                     className="bg-white/10 backdrop-blur-lg rounded-xl p-4 flex items-center space-x-4 hover:bg-white/20 cursor-pointer transition-colors duration-200"
                   >
                     <img
