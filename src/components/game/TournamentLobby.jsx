@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FaTrophy, FaUsers, FaCoins, FaMoneyBillWave, FaArrowLeft, FaGamepad, FaCalendarAlt, FaClock, FaInfoCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
@@ -12,6 +12,8 @@ const TournamentLobby = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [joining, setJoining] = useState(false);
+  const hasShownNoScoresRef = useRef(false);
+  const notificationShownKey = `tournament_${tournamentId}_notification_shown`;
 
   // Format date and time
   const formatDateTime = (dateString) => {
@@ -46,6 +48,13 @@ const TournamentLobby = () => {
     return `Starts in ${minutes}m`;
   };
 
+  // Reset the notification flag when the component mounts or tournamentId changes
+  useEffect(() => {
+    hasShownNoScoresRef.current = false;
+    // Clear any existing notification with this ID
+    toast.dismiss('no-scores-notification');
+  }, [tournamentId]);
+
   // Fetch tournament and game details
   const fetchTournamentDetails = useCallback(async () => {
     if (!tournamentId) {
@@ -68,9 +77,33 @@ const TournamentLobby = () => {
       console.log('Fetched tournament data:', tournamentData);
       setTournament(tournamentData);
       
-      // If tournament has a game ID, fetch game details
+      // If tournament has a game ID, fetch game details and scores
       if (tournamentData.gameId) {
         try {
+          // Fetch scores for this tournament
+          try {
+            const scoresResponse = await api.get(`/api/score?roomId=${tournamentId}&gameName=${encodeURIComponent(tournamentData.name || '')}`);
+            
+            // Check if no scores found and we haven't shown the notification yet
+            if (scoresResponse.data && (!scoresResponse.data.scores || scoresResponse.data.scores.length === 0)) {
+              if (!hasShownNoScoresRef.current) {
+                // Show the notification only once per tournament
+                toast.info('No scores found for this tournament yet. Be the first to play!', {
+                  toastId: 'no-scores-notification',
+                  autoClose: 5000,
+                  onClose: () => {
+                    hasShownNoScoresRef.current = true;
+                    sessionStorage.setItem(notificationShownKey, 'true');
+                  }
+                });
+              }
+            }
+          } catch (scoreError) {
+            // Only log the error if it's not a 404 (which is expected when no scores exist)
+            if (scoreError.response?.status !== 404) {
+              console.error('Error fetching scores:', scoreError);
+            }
+          }
           console.log(`Fetching game details for game ID: ${tournamentData.gameId}`);
           const gameResponse = await api.get(`/games/${tournamentData.gameId}`);
           if (gameResponse.data.success) {

@@ -161,8 +161,8 @@ const Challenges = () => {
     try {
       await api.put(`/challenges/${challengeId}/accept`);
       toast.success('Challenge accepted successfully');
-      navigate(`/tournament-lobby/${gameId}`); // Redirect to game page after accepting
       fetchChallenges();
+      navigate(`/tournament-lobby/${gameId}`); // Redirect to game page after accepting
     } catch (error) {
       console.error('Error accepting challenge:', error);
       toast.error('Failed to accept challenge');
