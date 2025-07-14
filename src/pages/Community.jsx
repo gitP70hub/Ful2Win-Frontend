@@ -928,7 +928,7 @@ const Community = () => {
       );
       
       return (
-        <div key={post._id} className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
+        <div key={post._id} className="rounded-xl p-4 mb-4 shadow-lg" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%)' }}>
           <div className="flex items-start mb-3">
             <div 
               className="cursor-pointer mr-2"
@@ -938,15 +938,15 @@ const Community = () => {
             </div>
             <div className="flex-1">
               <div className="flex items-center">
-                <h4 className="font-semibold mr-2">
+                <h4 className="font-semibold mr-1" style={{ fontFamily: 'Courier New, Courier, monospace', fontSize: '1.33rem' }}>
                   {userName}
                 </h4>
-                <span className="text-xs text-dullBlue" title={new Date(post.createdAt).toLocaleString()}>
+                <span className="text-xs text-white" title={new Date(post.createdAt).toLocaleString()}>
                   {formatTimeAgo(post.createdAt)}
                   {post.isEdited && ' • Edited'}
                 </span>
               </div>
-              <p className="text-sm text-dullBlue">
+              <p className="text-sm text-white">
                 @{userUsername}
               </p>
             </div>
@@ -1103,10 +1103,10 @@ const Community = () => {
               </div>
             </div>
           ) : (
-            <div className="mb-3">
-              <p className="whitespace-pre-wrap">{post.content}</p>
+            <div className="mb-2">
+              <p className="whitespace-pre-wrap" style={{ fontFamily: 'Georgia, Times New Roman, Times, serif' }}>{post.content}</p>
               {post.isEdited && (
-                <span className="text-xs text-dullBlue mt-1 block">
+                <span className="text-xs text-white mt-1 block">
                   (edited)
                 </span>
               )}
@@ -1202,9 +1202,9 @@ const Community = () => {
           )}
           
           <div className="flex flex-col">
-            <div className="flex items-center justify-between text-dullBlue hover:text-white text-sm border-t border-white/10 pt-3">
+            <div className="flex items-center justify-between text-white text-sm border-t border-white/10 pt-3">
               <button 
-                className={`flex items-center group transition-colors ${post.likes?.includes(currentUser?._id) ? 'text-red-500' : 'text-dullBlue hover:text-red-500'}`}
+                className={`flex items-center group transition-colors ${post.likes?.includes(currentUser?._id) ? 'text-red-500' : 'text-white hover:text-red-500'}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleLike(post._id);
@@ -1221,7 +1221,7 @@ const Community = () => {
               </button>
               <div className="flex items-center">
                 <button 
-                  className={`flex items-center ${showComments[post._id] ? 'text-blue-400' : 'hover:text-white'}`}
+                  className={`flex items-center ${showComments[post._id] ? 'text-blue-400' : 'hover:text-white text-white'}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     // Toggle comments visibility and reset showAllComments to false
@@ -1243,7 +1243,7 @@ const Community = () => {
                   <FiMessageCircle className="mr-1" /> {post.commentCount || post.comments?.length || 0}
                 </button>
                 <button 
-                  className="ml-2 text-xs text-blue-400 hover:underline"
+                  className="ml-2 text-xs text-blue-400 hover:underline text-white"
                   onClick={(e) => {
                     e.stopPropagation();
                     // Focus the comment input when clicking the comment button
@@ -1260,7 +1260,7 @@ const Community = () => {
                 </button>
               </div>
               <button 
-                className="flex items-center text-dullBlue hover:text-white"
+                className="flex items-center text-white hover:text-white"
                 onClick={async (e) => {
                   e.stopPropagation();
                   try {
@@ -1327,7 +1327,7 @@ const Community = () => {
             {/* Comments list - Only show if comments exist and the section is toggled */}
             {showComments[post._id] && (post.comments?.length > 0 || showCommentInput === post._id) && (
               <div className="mt-3 space-y-3 max-h-60 overflow-y-auto pr-2">
-                <div className="flex justify-between items-center text-sm font-medium text-gray-400 border-b border-white/10 pb-1">
+                <div className="flex justify-between items-center text-sm font-medium text-white border-b border-white/10 pb-1">
                   <span>Comments</span>
                   <span className="text-xs">{post.commentCount || post.comments?.length} total</span>
                 </div>
@@ -1391,11 +1391,11 @@ const Community = () => {
                               >
                                 {user?.username || 'User'}
                               </span>
-                              <span className="text-xs text-gray-400" title={new Date(createdAt).toLocaleString()}>
+                              <span className="text-xs text-white" title={new Date(createdAt).toLocaleString()}>
                                 {formatTimeAgo(createdAt)}
                               </span>
                             </div>
-                            <p className="mt-0.5 text-gray-200 break-words">
+                            <p className="mt-0.5 text-white break-words">
                               {content}
                             </p>
                           </div>
@@ -1408,7 +1408,7 @@ const Community = () => {
                 {!showAllComments[post._id] && post.comments.length > 2 && (
                   <button 
                     onClick={() => setShowAllComments(prev => ({ ...prev, [post._id]: true }))}
-                    className="text-sm text-blue-400 hover:text-blue-300 w-full text-center py-1"
+                    className="text-sm text-blue-400 hover:text-blue-300 w-full text-center py-1 text-white"
                   >
                     View {post.comments.length - 2} more comments
                   </button>
@@ -1418,7 +1418,7 @@ const Community = () => {
                 {showAllComments[post._id] && post.comments.length > 2 && (
                   <button 
                     onClick={() => setShowAllComments(prev => ({ ...prev, [post._id]: false }))}
-                    className="text-sm text-gray-400 hover:text-gray-300 w-full text-center py-1"
+                    className="text-sm text-white hover:text-white w-full text-center py-1"
                   >
                     Show less
                   </button>
@@ -1448,7 +1448,7 @@ const Community = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen pb-24 overflow-hidden text-white bg-blueGradient">
+    <div className="relative min-h-screen pb-24 overflow-hidden text-white" style={{ background: 'linear-gradient(120deg, rgba(240,242,247,0.65) 0%, rgba(220,225,235,0.55) 100%)', backdropFilter: 'blur(8px)' }}>
       <BackgroundBubbles />
       {viewingProfile && (
         <CommunityProfile
@@ -1530,8 +1530,8 @@ const Community = () => {
                   </div>
                 </div>
 
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-6 border border-white/10">
-                  <h3 className="text-lg font-semibold mb-4">Create Post</h3>
+                <div className="rounded-xl p-4 mb-6 shadow-lg" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%)' }}>
+                  <h3 className="text-lg font-semibold mb-4" style={{ fontFamily: 'Roboto, Segoe UI, Arial, sans-serif' }}>Create Post</h3>
                   <div className="create-post-card flex flex-row">
                     {currentUser?.profilePicture ? (
                       <div className="w-10 h-10 rounded-full border-2 border-dullBlue p-0.5 mr-3 flex-shrink-0">
@@ -1552,7 +1552,7 @@ const Community = () => {
                           <input
                             type="text"
                             placeholder="What's on your mind?"
-                            className="w-full bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white mb-3 focus:outline-none focus:ring-0 focus:border-white/20"
+                            className="w-full bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white mb-3 focus:outline-none focus:ring-0 focus:border-white/20 placeholder-white"
                             onClick={() => setShowCreatePost(true)}
                             readOnly
                           />
@@ -1608,7 +1608,7 @@ const Community = () => {
                           />
                           <button 
                             type="button"
-                            className="flex items-center text-sm text-gray-300 hover:text-white whitespace-nowrap"
+                            className="flex items-center text-sm text-white hover:text-white whitespace-nowrap"
                             onClick={() => document.getElementById('media-upload').click()}
                           >
                             <FaImage className="mr-1" /> {fileType === 'video' ? 'Change Media' : 'Photo'}
