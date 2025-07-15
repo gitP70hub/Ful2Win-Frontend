@@ -713,7 +713,7 @@ const Community = () => {
     { id: 'all', label: 'All' },
     { id: 'popular', label: 'Popular', icon: <FiStar className="mr-1" /> },
     { id: 'recent', label: 'Recent', icon: <FiClock className="mr-1" /> },
-    { id: 'discussions', label: 'Discussions', icon: <FiMessageCircle className="mr-1" /> },
+    // { id: 'discussions', label: 'Discussions', icon: <FiMessageCircle className="mr-1" /> },
   ];
 
   // Filter and sort posts based on active tab
@@ -928,7 +928,11 @@ const Community = () => {
       );
       
       return (
+<<<<<<< HEAD
         <div key={post._id} className="rounded-xl p-4 mb-4 shadow-lg" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%)' }}>
+=======
+        <div key={post._id} className="rounded-xl p-4 mb-4 shadow-lg" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%)', opacity: 0.85 }}>
+>>>>>>> 22f6353d2b2fe822143ffffdbb6dfd971dcae011
           <div className="flex items-start mb-3">
             <div 
               className="cursor-pointer mr-2"
@@ -1243,7 +1247,11 @@ const Community = () => {
                   <FiMessageCircle className="mr-1" /> {post.commentCount || post.comments?.length || 0}
                 </button>
                 <button 
+<<<<<<< HEAD
                   className="ml-2 text-xs hover:underline text-white"
+=======
+                  className="ml-2 text-xs text-blue-400 hover:underline text-white"
+>>>>>>> 22f6353d2b2fe822143ffffdbb6dfd971dcae011
                   onClick={(e) => {
                     e.stopPropagation();
                     // Focus the comment input when clicking the comment button
@@ -1408,7 +1416,7 @@ const Community = () => {
                 {!showAllComments[post._id] && post.comments.length > 2 && (
                   <button 
                     onClick={() => setShowAllComments(prev => ({ ...prev, [post._id]: true }))}
-                    className="text-sm text-blue-400 hover:text-blue-300 w-full text-center py-1"
+                    className="text-sm text-blue-400 hover:text-blue-300 w-full text-center py-1 text-white"
                   >
                     View {post.comments.length - 2} more comments
                   </button>
@@ -1464,27 +1472,29 @@ const Community = () => {
           <div className="pt-20 md:pt-0 w-full flex justify-center">
             <div className="w-full max-w-3xl px-4">
               <div className="hidden md:flex gap-2 mb-2 overflow-x-auto py-1 justify-end pr-1">
-                {communityTabs.map((tab) => (
-                  <Button
-                    key={tab.id}
-                    variant={activeTab === tab.id ? 'primary' : 'gradient'}
-                    onClick={() => handleTabChange(tab.id)}
-                    className="rounded-full px-4 py-2 flex items-center whitespace-nowrap text-sm"
-                  >
-                    {React.cloneElement(tab.icon, { className: 'mr-1.5' })}
-                    {tab.label}
-                  </Button>
-                ))}
-              </div>
-
-              <div className="flex md:hidden w-full mb-2 py-1 px-1">
-                <div className="w-full flex justify-start space-x-1 pr-1">
+                <div className="flex w-full gap-2">
                   {communityTabs.map((tab) => (
                     <Button
                       key={tab.id}
                       variant={activeTab === tab.id ? 'primary' : 'gradient'}
                       onClick={() => handleTabChange(tab.id)}
-                      className={`rounded-full ${activeTab === tab.id ? 'px-3 py-1.5' : 'p-2.5'} flex items-center justify-center`}
+                      className="rounded-full flex-1 min-w-0 px-4 py-2 flex items-center justify-center whitespace-nowrap text-sm"
+                    >
+                      {React.cloneElement(tab.icon, { className: 'mr-1.5' })}
+                      {tab.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex md:hidden w-full mb-2 py-1 px-1">
+                <div className="w-full flex gap-1">
+                  {communityTabs.map((tab) => (
+                    <Button
+                      key={tab.id}
+                      variant={activeTab === tab.id ? 'primary' : 'gradient'}
+                      onClick={() => handleTabChange(tab.id)}
+                      className={`rounded-full flex-1 min-w-0 ${activeTab === tab.id ? 'px-3 py-1.5' : 'p-2.5'} flex items-center justify-center`}
                       title={tab.label}
                     >
                       {React.cloneElement(tab.icon, { 
@@ -1508,9 +1518,18 @@ const Community = () => {
                     {typeTabs.map((tab) => (
                       <Button
                         key={tab.id}
-                        variant={activeType === tab.id ? 'primary' : 'outline'}
+                        variant={activeType === tab.id ? 'primary' : undefined}
                         onClick={() => setActiveType(tab.id)}
-                        className={`rounded-full text-sm ${activeType === tab.id ? 'px-3 py-1.5' : 'p-2.5'} flex items-center justify-center`}
+                        className={`rounded-full text-sm ${activeType === tab.id ? 'px-3 py-1.5' : 'p-2.5'} flex items-center justify-center ${activeType !== tab.id ? 'text-white border-0' : ''}`}
+                        style={{
+                          ...(activeType !== tab.id
+                            ? {
+                                background: 'linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%)',
+                                color: 'white'
+                              }
+                            : {}),
+                          border: '2px solid #FFC107'
+                        }}
                         title={tab.label}
                       >
                         {tab.icon ? (
@@ -1530,7 +1549,11 @@ const Community = () => {
                   </div>
                 </div>
 
+<<<<<<< HEAD
                 <div className="rounded-xl p-4 mb-6 shadow-lg" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%)' }}>
+=======
+                <div className="rounded-xl p-4 mb-6 shadow-lg" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%)', opacity: 0.85 }}>
+>>>>>>> 22f6353d2b2fe822143ffffdbb6dfd971dcae011
                   <h3 className="text-lg font-semibold mb-4" style={{ fontFamily: 'Roboto, Segoe UI, Arial, sans-serif' }}>Create Post</h3>
                   <div className="create-post-card flex flex-row">
                     {currentUser?.profilePicture ? (
