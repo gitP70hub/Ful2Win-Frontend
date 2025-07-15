@@ -441,13 +441,13 @@ const ChatScreen = ({ selectedFriend, setSelectedFriend }) => {
       {selectedFriend ? (
         <div className="w-full h-full flex flex-col">
           {/* Header */}
-          <div className="h-16 bg-blueHorizontalGradient border-b border-blue-400/30 flex items-center px-4 shadow-sm text-white">
+          <div className="h-16 bg-blueHorizontalGradient border-b border-blue-400/30 flex items-center px-4 shadow-sm text-white ">
             <button 
               onClick={() => setSelectedFriend(null)} 
               className="p-2 rounded-full hover:bg-white/20 mr-3 transition-colors"
               aria-label="Back to conversations"
             >
-              <FiArrowLeft size={20} className="text-white" />
+              <FiArrowLeft size={20} className="text-white relative" />
             </button>
             <div className="flex items-center">
               <div className="relative">

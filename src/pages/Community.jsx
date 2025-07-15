@@ -927,12 +927,9 @@ const Community = () => {
         </div>
       );
       
-      return (
-<<<<<<< HEAD
-        <div key={post._id} className="rounded-xl p-4 mb-4 shadow-lg" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%)' }}>
-=======
-        <div key={post._id} className="rounded-xl p-4 mb-4 shadow-lg" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%)', opacity: 0.85 }}>
->>>>>>> 22f6353d2b2fe822143ffffdbb6dfd971dcae011
+return (
+  <div key={post._id} className="rounded-xl p-4 mb-4 shadow-lg"    
+  style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%)', opacity: 0.75 }}>
           <div className="flex items-start mb-3">
             <div 
               className="cursor-pointer mr-2"
@@ -1246,12 +1243,7 @@ const Community = () => {
                 >
                   <FiMessageCircle className="mr-1" /> {post.commentCount || post.comments?.length || 0}
                 </button>
-                <button 
-<<<<<<< HEAD
-                  className="ml-2 text-xs hover:underline text-white"
-=======
-                  className="ml-2 text-xs text-blue-400 hover:underline text-white"
->>>>>>> 22f6353d2b2fe822143ffffdbb6dfd971dcae011
+                <button className="ml-2 text-xs text-blue-400 hover:underline"
                   onClick={(e) => {
                     e.stopPropagation();
                     // Focus the comment input when clicking the comment button
@@ -1416,7 +1408,7 @@ const Community = () => {
                 {!showAllComments[post._id] && post.comments.length > 2 && (
                   <button 
                     onClick={() => setShowAllComments(prev => ({ ...prev, [post._id]: true }))}
-                    className="text-sm text-blue-400 hover:text-blue-300 w-full text-center py-1 text-white"
+                    className="text-sm text-blue-400 hover:text-blue-300 w-full text-center py-1"
                   >
                     View {post.comments.length - 2} more comments
                   </button>
@@ -1514,13 +1506,13 @@ const Community = () => {
             {activeTab === 'feed' && (
               <div className="w-full max-w-3xl px-4 mx-auto mt-1">
                 <div className="w-full mb-2 py-1">
-                  <div className="flex justify-start space-x-1 pr-1">
+                  <div className="flex justify-center space-x-1 pr-1">
                     {typeTabs.map((tab) => (
                       <Button
                         key={tab.id}
                         variant={activeType === tab.id ? 'primary' : undefined}
                         onClick={() => setActiveType(tab.id)}
-                        className={`rounded-full text-sm ${activeType === tab.id ? 'px-3 py-1.5' : 'p-2.5'} flex items-center justify-center ${activeType !== tab.id ? 'text-white border-0' : ''}`}
+                        className={`rounded-full text-sm ${activeType === tab.id ? 'px-4 py-1.5' : 'p-2.5'} flex items-center justify-center ${activeType !== tab.id ? 'text-white border-0' : ''}`}
                         style={{
                           ...(activeType !== tab.id
                             ? {
@@ -1549,11 +1541,7 @@ const Community = () => {
                   </div>
                 </div>
 
-<<<<<<< HEAD
-                <div className="rounded-xl p-4 mb-6 shadow-lg" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%)' }}>
-=======
                 <div className="rounded-xl p-4 mb-6 shadow-lg" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%)', opacity: 0.85 }}>
->>>>>>> 22f6353d2b2fe822143ffffdbb6dfd971dcae011
                   <h3 className="text-lg font-semibold mb-4" style={{ fontFamily: 'Roboto, Segoe UI, Arial, sans-serif' }}>Create Post</h3>
                   <div className="create-post-card flex flex-row">
                     {currentUser?.profilePicture ? (
