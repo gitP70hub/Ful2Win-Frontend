@@ -16,6 +16,7 @@ export default {
         '-apple-system',
         'BlinkMacSystemFont',
         'sans-serif',
+        'Orbitron',
       ],
       heading: ['Inter', 'sans-serif'],
       mono: [
@@ -70,5 +71,16 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+    addUtilities({
+      '.font-robotItalic': {
+        fontFamily: 'Orbitron, sans-serif',
+        transform: 'skewX(-10deg)',
+        letterSpacing: '-0.0090em',
+        fontweight: '600',
+      },
+    });
+  },
+  ],
 }

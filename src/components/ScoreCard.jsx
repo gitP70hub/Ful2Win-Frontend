@@ -1,10 +1,17 @@
-import React from "react";
+//import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ImCancelCircle } from "react-icons/im";
 import { FaTrophy } from "react-icons/fa";
+import React, { useEffect } from "react";
 
 const ScoreCard = ({ game, userId, score, roomId, gameName }) => {
   const navigate = useNavigate();
+
+   
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("play-sound", { detail: "win" })); // ✅ Play win sound on mount
+  }, []);
+//sound effect added for win..
 
   return (
    <div className="w-screen h-screen bg-gradient-to-b from-blue-900 to-blue-800 text-white flex items-center justify-center">

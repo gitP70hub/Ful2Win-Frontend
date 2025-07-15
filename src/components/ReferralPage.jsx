@@ -117,16 +117,19 @@ const ReferralPage = () => {
     }
   );
 
-  setTimeout(() => setCopied(false), 2000);
-};
-
-
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const handleShare = (platform) => {
-    const url = `${window.location.origin}/signup?ref=${referralCode}`;
-    const text = `Join Ful2Win and earn rewards using my code: ${referralCode}`;
+    if (!referralCode) {
+      toast.error('Referral code not loaded yet');
+      return;
+    }
+    const url = `${window.location.origin}/signup?ref=${encodeURIComponent(referralCode)}`;
+    const text = `Join Ful2Win and earn rewards using my code: ${referralCode} - ${url}`;
+    
     if (platform === 'whatsapp') {
-      window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     } else if (platform === 'telegram') {
       window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
     }

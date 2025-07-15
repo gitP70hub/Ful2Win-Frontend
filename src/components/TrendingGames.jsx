@@ -6,7 +6,7 @@ import colorsmash from '../assets/colorsmash.png';
 import matchmerge from '../assets/MatchMerge.png';
 import eggcatcher from '../assets/EggCatcher.png';
 import gravityhop from '../assets/GravityHop.png';
-import borderBackground from '../assets/Border.png';
+import borderBackground from '../assets/Border1.png';
 
 const TrendingGames = () => {
   const navigate = useNavigate();
@@ -16,11 +16,11 @@ const TrendingGames = () => {
   const [hasSecondRow, setHasSecondRow] = useState(false);
 
   const games = [
-    { id: 1, name: 'Flappy Ball', path: '/games', image: flappyball },
-    { id: 2, name: 'Color Smash', path: '/games', image: colorsmash },
-    { id: 3, name: 'Match Merge', path: '/games', image: matchmerge },
-    { id: 4, name: 'Egg Catcher', path: '/games', image: eggcatcher },
-    { id: 5, name: 'Gravity Hop', path: '/games', image: gravityhop },
+    { id: 1, name: 'Flappy Ball', path: '/flappyball', image: flappyball },
+    { id: 2, name: 'Color Smash', path: '/colorsmash', image: colorsmash },
+    { id: 3, name: 'Match Merge', path: '/matchmerge', image: matchmerge },
+    { id: 4, name: 'Egg Catcher', path: '/eggcatcher', image: eggcatcher },
+    { id: 5, name: 'Gravity Hop', path: '/gravityhop', image: gravityhop },
   ];
 
   useLayoutEffect(() => {
@@ -59,21 +59,35 @@ const TrendingGames = () => {
 
   return (
     <section
-      className="w-full bg-cover bg-center bg-no-repeat"
+      className="w-full bg-no-repeat bg-top relative z-0"
       style={{
         backgroundImage: `url(${borderBackground})`,
         backgroundRepeat: 'no-repeat',
-        backgroundSize: '100% 100%',
-        padding: '12px',
-        paddingBottom: showAll ? '40px' : '12px', // extra bottom padding when showAll is true
+        backgroundPosition: 'top',
+        backgroundSize: '100% auto',
       }}
     >
-      <div className="max-w-screen-lg mx-auto px-3 py-3">
-        <div className="p-3 sm:p-2">
+      <div
+        className="max-w-full mx-auto mt-3"
+        style={{
+          paddingTop: 'clamp(24px, 5vw, 56px)',
+          paddingBottom: 'clamp(20px, 3.5vw, 36px)',
+          paddingLeft: 'clamp(20px, 5vw, 60px)',
+          paddingRight: 'clamp(20px, 5vw, 60px)',
+        }}
+      >
+        <div className="max-w-screen-lg mx-auto">
           {/* Header */}
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex justify-center items-center gap-2 mb-3">
             <img src={controllerIcon} alt="icon" className="w-5 h-5" />
-            <h2 className="text-base sm:text-lg font-bold text-white">Trending Games</h2>
+            <h2
+              className="font-bold text-white font-orbitron italic leading-tight"
+              style={{
+                fontSize: 'clamp(12px, 3vw, 24px)',
+              }}
+            >
+              Trending Games
+            </h2>
           </div>
 
           {/* Game Grid */}
@@ -97,26 +111,13 @@ const TrendingGames = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="h-[36px] sm:h-[40px] flex items-center justify-center bg-white/5 px-1 text-center">
-                  <p
-                    className="text-[11px] sm:text-[12px] text-center font-semibold leading-tight px-1 w-full whitespace-normal break-words"
-                    style={{
-                      color: '#C6D6FF',
-                      textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-                      fontFamily: 'Inter, sans-serif',
-                      letterSpacing: '0.4px',
-                    }}
-                  >
-                    {game.name}
-                  </p>
-                </div>
               </div>
             ))}
           </div>
 
           {/* See More / See Less */}
           {hasSecondRow && (
-            <div className="text-right leading-none mt-1">
+            <div className="text-center leading-none mt-1">
               <button
                 onClick={() => setShowAll((prev) => !prev)}
                 className="text-white text-[10px] underline hover:text-gray-300 transition p-0 m-0"

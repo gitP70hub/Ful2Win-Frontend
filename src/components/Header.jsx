@@ -190,26 +190,26 @@ const Header = () => {
 
       {/* Mobile Header */}
       <header className="md:hidden fixed top-0 left-0 right-0 bg-blueGradient z-40 rounded-b-xl">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-1.5 flex items-center justify-between">
           <img src={logo} alt="Ludo Logo" className="h-10 w-auto object-contain" />
 
           <div className="flex items-center space-x-3">
             {/* Wallet */}
             <div
               onClick={() => navigate('/wallet')}
-              className="flex items-center bg-active px-3 py-1.5 rounded-full cursor-pointer hover:opacity-90 transition"
+              className="flex items-center bg-active px-0.5 py-0.5 rounded-full cursor-pointer hover:opacity-90 transition"
             >
-              <IoMdWallet className=" rounded-full text-gray-800 text-xl mr-1.5" />
+              <IoMdWallet className=" rounded-full text-gray-800 text-sm mr-1.5" />
               {isLoading ? (
-                <div className='h-4 w-12 bg-gray-800 animate-pulse rounded'></div>
+                <div className='h-1 w-10 bg-gray-800 animate-pulse rounded'></div>
               ) : (
-                <span className="text-gray-800 font-medium text-md">{formattedBalance}</span>
+                <span className="text-gray-800 font-medium text-[10px]">{formattedBalance}</span>
               )}
             </div>
 
             {/* Bell Notification */}
             <button
-              className="text-dullBlue text-xl hover:opacity-80 transition-opacity"
+              className="text-dullBlue text-base hover:opacity-80 transition-opacity"
               onClick={() => navigate('/notifications')}
             >
               <FaBell />
@@ -218,7 +218,7 @@ const Header = () => {
             {/* Profile */}
             <button
               onClick={() => navigate('/profile')}
-              className="w-9 h-9 rounded-full overflow-hidden border-[3px] border-dullBlue hover:opacity-90 transition-opacity"
+              className="w-8 h-8 rounded-full overflow-hidden border-2 border-dullBlue hover:opacity-90 transition-opacity"
             >
               {profilePicture ? (
                 <img 

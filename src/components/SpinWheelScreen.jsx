@@ -98,6 +98,10 @@ const SpinWheelScreen = ({ onClose, isVisible, initialSpins = 5 }) => {
         setIsSpinning(false);
         setSpinsLeft((s) => Math.max(0, s - 1));
         setCurrentReward(`${LABELS[correctedIndex]} Coins`);
+
+         //window.dispatchEvent(new CustomEvent("play-sound", { detail: "coin" })); //another sound coin effect.
+        window.dispatchEvent(new CustomEvent("play-sound", { detail: "win" })); // ✅ Play win sound
+
         setShowReward(true);
         setLastTimestamp(Date.now());
         toast.success(`You won ${coinsWon} coins!`);

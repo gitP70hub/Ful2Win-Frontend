@@ -1,94 +1,73 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import logo from '../assets/logo.png';
-import { FaHome, FaGamepad, FaTrophy, FaUsers, FaWallet, FaUser } from 'react-icons/fa';
+import { FaHome, FaGamepad, FaTrophy, FaUsers, FaUser } from 'react-icons/fa';
 
 const Navbar = () => {
   const location = useLocation();
-  const { isAuthenticated, user } = useAuth();
 
-  useEffect(() => {
-    // Removed console logs for production
-  }, [isAuthenticated, user]);
+  const navItems = [
+    { path: '/', icon: <FaHome />, label: 'Home' },
+    { path: '/games', icon: <FaGamepad />, label: 'Games' },
+    { path: '/tournaments', icon: <FaTrophy />, label: 'Tournaments' },
+    { path: '/community', icon: <FaUsers />, label: 'Community' },
+    { path: '/profile', icon: <FaUser />, label: 'Profile' },
+  ];
+
+  const activeIndex = navItems.findIndex(item => item.path === location.pathname);
+  const activeItem = navItems[activeIndex] || navItems[2];
+
+  const leftItems = navItems.filter((_, index) => index !== activeIndex).slice(0, 2);
+  const rightItems = navItems.filter((_, index) => index !== activeIndex).slice(2);
+
   return (
     <>
-      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-b from-transparent to-[#022870] h-16 md:h-24">
-      </div>
-      <nav className="fixed bottom-0 left-0 right-0 lg:m-2 md:my-0 md:mx-16 lg:mx-64 rounded-t-lg md:rounded-lg bg-blueHorizontalGradient text-dullBlue py-2.5 md:py-3 z-50 h-16">
-        <div className="max-w-3xl mx-auto px-3">
-          {/* Desktop/Tablet View with Logo and Navigation */}
-          <div className="hidden md:flex items-center justify-between relative">
-            {/* Left Navigation Links */}
-            <div className="flex-1 flex justify-between max-w-[280px]">
-              {[
-                { path: '/', icon: <FaHome className="text-xl mb-0.5" />, label: 'Home' },
-                { path: '/games', icon: <FaGamepad className="text-xl mb-0.5" />, label: 'Games' },
-                { path: '/tournaments', icon: <FaTrophy className="text-xl mb-0.5" />, label: 'Tournaments' }
-              ].map((item) => (
-                <Link 
-                  key={item.path}
-                  to={item.path} 
-                  className={`flex flex-col items-center text-xs px-2 ${location.pathname === item.path ? 'text-active' : ''}`}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </Link>
-              ))}
-            </div>
+      {/* Background Blur */}
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-b from-transparent to-[#022870] h-11 md:h-16 z-40" />
 
-            {/* Centered Logo */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 -top-7">
-              <div className="w-16 h-16 rounded-xl border-2 border-dullBlue flex items-center justify-center bg-blueGradient">
-                <img src={logo} alt="Logo" className="w-14 h-14 object-contain" />
-              </div>
-            </div>
+      {/* Main Navbar */}
+      <nav className="fixed bottom-0 left-0 right-0 lg:m-2 md:mx-16 lg:mx-64 rounded-t-lg md:rounded-lg bg-blueHorizontalGradient text-dullBlue z-50 h-11 md:h-14">
+        <div className="max-w-3xl mx-auto px-4 relative h-full">
 
-            {/* Right Navigation Links */}
-            <div className="flex-1 flex justify-between max-w-[280px]">
-              {[
-                { path: '/community', icon: <FaUsers className="text-xl mb-0.5" />, label: 'Community' },
-                { path: '/wallet', icon: <FaWallet className="text-xl mb-0.5" />, label: 'Wallet' },
-                { path: '/profile', icon: <FaUser className="text-xl mb-0.5" />, label: 'Profile' }
-              ].map((item) => (
-                <Link 
+          {/* Grid */}
+          <div className="grid grid-cols-5 text-center items-end h-full relative">
+            {[...leftItems, null, ...rightItems].map((item, index) =>
+              item ? (
+                <Link
                   key={item.path}
-                  to={item.path} 
-                  className={`flex flex-col items-center text-xs px-2 ${location.pathname === item.path ? 'text-active' : ''}`}
+                  to={item.path}
+                  className={`flex flex-col items-center justify-end pb-3 md:pb-4 ${
+                    location.pathname === item.path ? 'text-yellow-400' : ''
+                  }`}
                 >
-                  {item.icon}
-                  <span>{item.label}</span>
+                  {React.cloneElement(item.icon, {
+                    className: `text-xl md:text-2xl ${
+                      location.pathname === item.path ? 'text-yellow-400' : ''
+                    }`,
+                  })}
                 </Link>
-              ))}
-            </div>
-          </div>
-          
-          {/* Navigation Links - Mobile View */}
-          <div className="md:hidden grid grid-cols-6 gap-0.5 px-1 h-full items-center">
-            {[
-              { path: '/', icon: <FaHome className="text-base mb-0.5" />, label: 'Home' },
-              { path: '/games', icon: <FaGamepad className="text-base mb-0.5" />, label: 'Games' },
-              { path: '/tournaments', icon: <FaTrophy className="text-base mb-0.5" />, label: 'Tournaments' },
-              { path: '/community', icon: <FaUsers className="text-base mb-0.5" />, label: 'Community' },
-              { path: '/wallet', icon: <FaWallet className="text-base mb-0.5" />, label: 'Wallet' },
-              { path: '/profile', icon: <FaUser className="text-base mb-0.5" />, label: 'Profile' }
-            ].map((item) => (
-              <Link 
-                key={item.path}
-                to={item.path} 
-                className={`flex flex-col items-center text-[9px] px-0.5 text-center leading-none ${location.pathname === item.path ? 'text-active' : ''}`}
-              >
-                {item.icon}
-                <span className="whitespace-nowrap overflow-hidden text-ellipsis w-full">{item.label}</span>
+              ) : (
+                <div key={`center-empty`} className="w-full h-full" />
+              )
+            )}
+
+            {/* Floating Active Icon */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 -top-6 md:-top-7 z-10">
+              <Link to={activeItem.path} className="flex flex-col items-center">
+                <div className="w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center bg-blueGradient shadow-lg ring-2 ring-white">
+                  {React.cloneElement(activeItem.icon, {
+                    className: 'text-yellow-400 text-lg md:text-xl',
+                  })}
+                </div>
+                <span className="text-[10px] md:text-xs mt-1 text-yellow-400 whitespace-nowrap">
+                  {activeItem.label}
+                </span>
               </Link>
-            ))}
+            </div>
           </div>
-
-          {/* Mobile Navigation Links - Hidden on Desktop */}
         </div>
       </nav>
     </>
   );
-}
+};
 
-export default Navbar
+export default Navbar;

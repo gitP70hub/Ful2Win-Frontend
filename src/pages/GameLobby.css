@@ -2,16 +2,22 @@
 body, html {
   margin: 0;
   padding: 0;
-   background: linear-gradient(to right, #1565C0, #0D47A1, #0A2472);
+  background: linear-gradient(to right, #1565C0, #0D47A1, #0A2472);
   font-family: sans-serif;
   color: white;
 }
 .app {
-  max-width: 420px;
-  margin: auto;
+  max-width: 100%;
+  margin: 0 auto;
   padding: 10px;
   position: relative;
-  padding-bottom: 60px; /* for bottom nav */
+  padding-bottom: 60px;
+}
+
+@media (min-width: 640px) {
+  .app {
+    max-width: 420px;
+  }
 }
 
 
@@ -62,9 +68,15 @@ body, html {
 .card {
   background: #0a1e3a;
   border-radius: 16px;
-  padding: 16px;
+  padding: 12px;
   margin-top: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+@media (min-width: 640px) {
+  .card {
+    padding: 16px;
+  }
 }
 .game-header {
   display: flex;
@@ -81,7 +93,13 @@ body, html {
 }
 .game-header h2 {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
+}
+
+@media (min-width: 640px) {
+  .game-header h2 {
+    font-size: 20px;
+  }
 }
 
 /* Sections */
@@ -90,10 +108,17 @@ body, html {
 }
 .section-label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-weight: 600;
   color: #ddd;
-  font-size: 14px;
+  font-size: 13px;
+}
+
+@media (min-width: 640px) {
+  .section-label {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
 }
 
 /* Mode buttons */

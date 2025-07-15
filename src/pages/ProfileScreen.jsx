@@ -166,7 +166,7 @@ const ProfileScreen = () => {
     {
       icon: (
         <img
-          src="/src/assets/win2.png"
+          src="./assets/win2.png"
           alt="Wins"
           className="w-5 h-5 object-contain"
         />
@@ -190,7 +190,7 @@ const ProfileScreen = () => {
 
   const profileActions = [
     { icon: <FiShare2 className="text-blue-600" />, text: "Referrals", action: "referrals" },
-    { icon: <img src="/src/assets/kyc7.png" alt="KYC" className="w-5 h-5" />, text: "KYC Status", action: "kyc" },
+    { icon: <img src="./assets/kyc7.png" alt="KYC" className="w-5 h-5" />, text: "KYC Status", action: "kyc" },
     { icon: <FiHeadphones className="text-blue-600" />, text: "Support", action: "support" },
     { icon: <FiLogOut className="text-red-500" />, text: "Log Out", action: "logout", isDanger: true },
   ];

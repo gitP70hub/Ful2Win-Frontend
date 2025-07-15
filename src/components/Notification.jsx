@@ -85,6 +85,7 @@ const Notification = () => {
   const socketRef = useRef(null);
 
   useEffect(() => {
+    window.dispatchEvent(new CustomEvent("play-sound", { detail: "notification" })); // 🔊 Play sound once on load new sound effect
     const fetchNotifications = async () => {
       if (!currentUser?.token) return;
       

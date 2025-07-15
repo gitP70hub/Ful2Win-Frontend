@@ -60,6 +60,7 @@ const Signup = () => {
       console.error('Error validating referral code:', error);
       setIsReferralCodeValid(false);
       toast.error('Error validating referral code');
+        window.dispatchEvent(new CustomEvent("play-sound", { detail: "universalError" }));//new sound effect
     } finally {
       setIsValidatingCode(false);
     }
@@ -129,6 +130,7 @@ const Signup = () => {
     if (!isValid) return;
     if (!formData.agree) {
       toast.error('Please agree to the terms and privacy policy');
+        window.dispatchEvent(new CustomEvent("play-sound", { detail: "universalError" }));//new add sound effect
       return;
     }
     try {
@@ -154,6 +156,7 @@ const Signup = () => {
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed. Please try again.';
       toast.error(message);
+        window.dispatchEvent(new CustomEvent("play-sound", { detail: "universalError" }));//new add sound effect
     } finally {
       setIsLoading(false);
     }

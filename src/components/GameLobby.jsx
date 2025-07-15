@@ -107,11 +107,11 @@ const navigate = useNavigate();
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 20, opacity: 0 }}
-            className="relative w-full max-w-md bg-darkBlueGradient rounded-2xl overflow-hidden shadow-2xl border border-gray-800/50"
+            className="relative w-full max-w-2xl bg-darkBlueGradient rounded-2xl overflow-hidden shadow-2xl border border-gray-800/50"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Game Header */}
-            <div className="relative h-48 bg-gray-900">
+            <div className="relative h-64 bg-gray-900 sm:h-48">
               <img
                 src={gameImage}
                 alt={gameTitle}
@@ -143,7 +143,7 @@ const navigate = useNavigate();
                     />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-white shadow-black shadow-2xl">{gameTitle}</h1>
+                    <h1 className="text-xl sm:text-2xl font-bold text-white shadow-black shadow-2xl">{gameTitle}</h1>
                     <div className="flex items-center gap-2 text-sm text-white mt-1 shadow-black shadow-2xl">
                       <span>{gameCategory}</span>
                       <span>•</span>
@@ -159,16 +159,17 @@ const navigate = useNavigate();
             </div>
             
             {/* Main Content */}
-            <div className="p-5">
+            <div className="p-4 sm:p-5">
               {/* Game Modes */}
-              <div className="space-y-3">
-                <h2 className="text-lg font-semibold text-white mb-2">Game Modes</h2>
+              <div className="space-y-3 sm:space-y-4">
+                <h2 className="text-lg font-semibold text-white mb-2 sm:text-xl">Game Modes</h2>
                 
                 <GameModeCard
                   title="Tournament"
                   description="Compete for big prizes"
                   entryFee={getEntryFee('tournament')}
                   onClick={() => handleGameModeSelect('tournament')}
+                  className="sm:w-full"
                 />
 
                 <GameModeCard

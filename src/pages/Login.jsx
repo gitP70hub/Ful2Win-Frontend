@@ -39,15 +39,18 @@ const Login = () => {
     e.preventDefault();
     if (!agree) {
       toast.error('Please agree to the terms and privacy policy');
+        window.dispatchEvent(new CustomEvent("play-sound", { detail: "universalError" })); //sound
       return;
     }
     if (!phoneNumber || !password) {
       toast.error('Please enter both phone number and password');
+        window.dispatchEvent(new CustomEvent("play-sound", { detail: "universalError" })); //sound
       return;
     }
     const formattedPhone = validatePhoneNumber(phoneNumber);
     if (!formattedPhone) {
       toast.error('Please enter a valid 10-digit phone number');
+        window.dispatchEvent(new CustomEvent("play-sound", { detail: "universalError" })); //sound
       return;
     }
     try {
@@ -58,9 +61,11 @@ const Login = () => {
         setTimeout(() => navigate('/', { replace: true }), 2000);
       } else {
         toast.error(result?.message || 'Login failed. Please try again.');
+          window.dispatchEvent(new CustomEvent("play-sound", { detail: "universalError" })); //sound
       }
     } catch (error) {
       toast.error(error.message || 'Login failed. Please try again.');
+        window.dispatchEvent(new CustomEvent("play-sound", { detail: "universalError" })); //sound
     } finally {
       setIsLoading(false);
     }
