@@ -1243,7 +1243,7 @@ const Community = () => {
                   <FiMessageCircle className="mr-1" /> {post.commentCount || post.comments?.length || 0}
                 </button>
                 <button 
-                  className="ml-2 text-xs text-blue-400 hover:underline text-white"
+                  className="ml-2 text-xs hover:underline text-white"
                   onClick={(e) => {
                     e.stopPropagation();
                     // Focus the comment input when clicking the comment button
@@ -1408,7 +1408,7 @@ const Community = () => {
                 {!showAllComments[post._id] && post.comments.length > 2 && (
                   <button 
                     onClick={() => setShowAllComments(prev => ({ ...prev, [post._id]: true }))}
-                    className="text-sm text-blue-400 hover:text-blue-300 w-full text-center py-1 text-white"
+                    className="text-sm text-blue-400 hover:text-blue-300 w-full text-center py-1"
                   >
                     View {post.comments.length - 2} more comments
                   </button>
